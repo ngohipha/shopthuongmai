@@ -96,10 +96,16 @@ const getAllProducts = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
+
+
+
+
 module.exports = {
   createProduct,
   getaProduct,
   getAllProducts,
   updateProduct,
   deleteProduct,
+  
 };
