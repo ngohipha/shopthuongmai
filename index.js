@@ -13,6 +13,7 @@ const blogRouter = require("./routes/blogRoute")
 const categoryRouter =require('./routes/categoryRoute')
 const blogCategoryRouter =require('./routes/blogcategoryRoute')
 const brandRouter =require('./routes/brandRoute')
+const couponRouter =require('./routes/couponRoute')
 
 
 dbConnect();
@@ -27,6 +28,7 @@ app.use("/api/blog",blogRouter);
 app.use("/api/category",categoryRouter);
 app.use("/api/blogcategory",blogCategoryRouter);
 app.use("/api/brand",brandRouter);
+app.use("/api/coupon",couponRouter);
 
 
 

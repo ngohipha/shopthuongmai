@@ -6,12 +6,14 @@ const {
   updateProduct,
   deleteProduct,
   addToWishlist,
+  ratting,
 } = require("../controller/productCtrl");
 const { isAdmin, authMiddleware } = require("../middlewares/authMiddleware");
 const router = express.Router();
 
 router.post("/",[authMiddleware , isAdmin], createProduct);
 router.put("/wishlist",authMiddleware , addToWishlist);
+router.put("/rating",authMiddleware , ratting);
 
 
 router.get("/:id", getaProduct);
