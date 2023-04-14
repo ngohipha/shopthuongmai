@@ -2,7 +2,9 @@ const Product = require("../models/productmodel");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const User = require("../models/usermodel");
-
+const validateMongoDbId = require("../utils/validateMongodbid");
+const { cloudinaryUploadImg } = require("../config/cloudinary");
+const fs = require('fs')
 const createProduct = asyncHandler(async (req, res) => {
   try {
     if (req.body.title) {
@@ -126,7 +128,7 @@ const addToWishlist = asyncHandler(async (req, res) => {
 
 const ratting = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { star, prodId , comment } = req.body;
+  const { star, prodId, comment } = req.body;
 
   try {
     const product = await Product.findById(prodId);
@@ -139,7 +141,7 @@ const ratting = asyncHandler(async (req, res) => {
           ratings: { $elemMatch: alreadyRated },
         },
         {
-          $set: { "ratings.$.star": star ,"ratings.$.comment": comment},
+          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
         },
         { new: true }
       );
@@ -177,6 +179,37 @@ const ratting = asyncHandler(async (req, res) => {
   }
 });
 
+const uploadImages = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+  try {
+    const uploader = (path) => cloudinaryUploadImg(path, "images");
+    const urls = [];
+    const files = req.files;
+    for (const file of files) {
+      const { path } = file;
+      const newpath = await uploader(path);
+      urls.push(newpath);
+      fs.unlinkSync(path)
+
+    }
+    const findProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        images: urls.map((file) => {
+          return file;
+        }),
+      },
+      {
+        new: true,
+      }
+    );
+    res.json(findProduct);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
 module.exports = {
   createProduct,
   getaProduct,
@@ -185,4 +218,5 @@ module.exports = {
   deleteProduct,
   addToWishlist,
   ratting,
+  uploadImages
 };
